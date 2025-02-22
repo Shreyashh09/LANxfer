@@ -4,18 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LAN File Sharing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h2>LAN File Sharing</h2>
 
     <!-- Upload Form -->
-    <input type="file" id="fileInput">
-    <button onclick="uploadFile()">Upload</button>
+    <div class="upload-container">
+        <input type="file" id="fileInput">
+        <button onclick="uploadFile()">Upload</button>
+    </div>
 
     <h3>Available Files</h3>
-    <ul id="fileList"></ul>
+    <table id="fileTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>File Name</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Files will be dynamically added here -->
+        </tbody>
+    </table>
 
-    <!-- Load JavaScript correctly -->
+    <!-- Load JavaScript -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

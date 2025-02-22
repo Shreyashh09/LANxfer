@@ -1,31 +1,41 @@
-from flask import Flask, request, send_from_directory, render_template
+from flask import Flask, render_template, request, jsonify, send_from_directory
 import os
 
-app = Flask(__name__, static_folder="static")
-UPLOAD_FOLDER = "./uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # ✅ Corrected variable reference
+app = Flask(__name__)
+
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Ensure the uploads directory exists
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 @app.route('/')
-def home():
-    return render_template("index.html")  # ✅ Serve from templates (fixes script.js issue)
+def index():
+    return render_template('index.html')
+
+@app.route('/get_files')
+def get_files():
+    """Returns a list of files in the upload directory"""
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return jsonify(files)
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    """Serves uploaded files"""
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    """Handles file uploads"""
+    if 'file' not in request.files:
+        return "No file part", 400
     file = request.files['file']
-    if file:
-        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-        file.save(filepath)
-        return "File uploaded successfully!"
-    return "Failed to upload file."
+    if file.filename == '':
+        return "No selected file", 400
 
-@app.route('/files')
-def list_files():
-    files = os.listdir(UPLOAD_FOLDER)
-    return {"files": files}
-
-@app.route('/download/<filename>')
-def download_file(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=True)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+    return "File uploaded successfully!", 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)  # Accessible over LAN
+    app.run(debug=True)

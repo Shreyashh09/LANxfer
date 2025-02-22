@@ -1,31 +1,57 @@
-async function uploadFile() {
-    let fileInput = document.getElementById("fileInput");
-    let formData = new FormData();
-    formData.append("file", fileInput.files[0]);
+document.addEventListener("DOMContentLoaded", function () {
+    fetchFiles();
+});
 
-    try {
-        let response = await fetch("/upload", { method: "POST", body: formData });
-        let result = await response.text();
-        console.log("Server Response:", result);
-    } catch (error) {
-        console.error("Upload failed:", error);
-    }
-    loadFiles();  // Refresh file list
+function fetchFiles() {
+    fetch("/get_files") // Fetch file list from Flask backend
+        .then(response => response.json())
+        .then(files => {
+            console.log("Fetched files:", files); // Debugging
+            populateFileTable(files);
+        })
+        .catch(error => console.error("Error fetching files:", error));
 }
 
+function populateFileTable(files) {
+    const tableBody = document.querySelector("#fileTable tbody");
+    tableBody.innerHTML = "";
 
-async function loadFiles() {
-    let response = await fetch("/files");
-    let data = await response.json();
-    let fileList = document.getElementById("fileList");
-    fileList.innerHTML = "";
+    if (files.length === 0) {
+        tableBody.innerHTML = "<tr><td colspan='3'>No files found</td></tr>";
+        return;
+    }
 
-    data.files.forEach(file => {
-        let listItem = document.createElement("li");
-        listItem.innerHTML = `<a href="/download/${file}" download>${file}</a>`;
-        fileList.appendChild(listItem);
+    files.forEach((file, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${file}</td>
+            <td><a href="/uploads/${file}" download>📥 Download</a></td>
+        `;
+        tableBody.appendChild(row);
     });
 }
 
-window.onload = loadFiles;  // Load files when page loads
+function uploadFile() {
+    const fileInput = document.getElementById("fileInput");
+    const file = fileInput.files[0];
 
+    if (!file) {
+        alert("Please select a file first.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch("/upload", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.text())
+    .then(result => {
+        alert(result);
+        fetchFiles(); // Refresh the file list
+    })
+    .catch(error => console.error("Error uploading file:", error));
+}
