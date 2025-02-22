@@ -3,16 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAN File Sharing</title>
+    <title>LANxfer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h2>LAN File Sharing</h2>
+    <!-- <canvas id="matrixBackground"></canvas> -->
+    <h1>LANxfer</h1>
 
-    <!-- Upload Form -->
-    <div class="upload-container">
-        <input type="file" id="fileInput">
-        <button onclick="uploadFile()">Upload</button>
+    <!-- Enhanced Upload Container -->
+    <div class="upload-container" id="dropZone">
+        <div class="upload-prompt">
+            <div class="upload-icon">📁</div>
+            <div>Drag & drop files here</div>
+            <div>or</div>
+            <div class="file-input-wrapper">
+                <input type="file" id="fileInput">
+                <button type="button">Choose File</button>
+            </div>
+        </div>
+        <div class="selected-file" id="selectedFile"></div>
+        <button onclick="uploadFile()" id="uploadButton">Upload</button>
     </div>
 
     <h3>Available Files</h3>
@@ -20,7 +30,9 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>File Name</th>
+                <th class="sortable" data-sort="name">File Name</th>
+                <th class="sortable" data-sort="size">Size</th>
+                <th class="sortable" data-sort="modified">Modified Date</th>
                 <th>Download</th>
             </tr>
         </thead>
@@ -29,7 +41,6 @@
         </tbody>
     </table>
 
-    <!-- Load JavaScript -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
