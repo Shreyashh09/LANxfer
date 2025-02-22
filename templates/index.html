@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAN File Sharing</title>
+</head>
+<body>
+    <h2>LAN File Sharing</h2>
+
+    <!-- Upload Form -->
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Upload</button>
+
+    <h3>Available Files</h3>
+    <ul id="fileList"></ul>
+
+    <!-- Load JavaScript correctly -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
