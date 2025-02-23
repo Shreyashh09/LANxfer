@@ -1,7 +1,9 @@
 # LANxfer - Offline LAN File Sharing
 
 ## 📌 Introduction
-LANxfer is a lightweight, cross-platform tool for offline file sharing over a **local network (LAN/Wi-Fi)** without needing internet access. It allows devices to transfer files seamlessly using various offline networking methods.
+LANxfer is a lightweight, cross-platform tool for offline file sharing over a **local network (LAN/Wi-Fi)** without needing internet access. It allows devices to transfer files seamlessly using various offline networking methods. Its primary purpose is to cater to users and organizations
+that prioritize data protection and want to avoid the vulnerabilities associated with traditional
+file-sharing methods.
 
 ## 🚀 Features
 - Peer-to-peer file transfer over a local network.
