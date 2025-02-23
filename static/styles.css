@@ -76,7 +76,7 @@ button {
     letter-spacing: 1px;
     font-weight: bold;
     border-radius: 5px;
-    margin-top: 10px;
+    margin-top: 30px;
 }
 
 button:hover {
@@ -150,14 +150,18 @@ a:hover {
     color: #33ff33;
     padding: 10px;
     border-radius: 5px;
-    margin-top: 10px;
+    margin-top: 0; /* Align with button */
     width: 70%; /* Reduced width to fit beside button */
     max-width: 250px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    
 }
 
 #recipientSelect option {
     background: black;
     color: #33ff33;
+    
 }
 
 .recipient-wrapper {
@@ -168,6 +172,8 @@ a:hover {
 }
 
 #refreshIPsButton {
-    padding: 10px 50px; /* Slightly smaller than other buttons */
+    padding: 11px 20px; /* Matches dropdown height */
     margin-top: 0; /* Align with dropdown */
+    white-space: nowrap; /* Prevents text wrapping */
+    min-width: 150px; /* Ensures enough space for text */
 }
