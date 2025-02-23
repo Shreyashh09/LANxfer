@@ -56,11 +56,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Initial file fetch
+    // Initial fetches
     fetchFiles();
+    fetchIPs();
+    // Refresh IPs every 10 seconds
+    setInterval(fetchIPs, 10000);
 });
 
-function preventDefaults (e) {
+function preventDefaults(e) {
     e.preventDefault();
     e.stopPropagation();
 }
@@ -81,15 +84,11 @@ function handleDrop(e) {
 
 function handleFileSelect(file) {
     if (file) {
-        // Create a new FileList object
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
-        
-        // Set the file input's files
         const fileInput = document.getElementById('fileInput');
         fileInput.files = dataTransfer.files;
         
-        // Update UI
         const selectedFileDiv = document.getElementById('selectedFile');
         selectedFileDiv.style.display = 'block';
         selectedFileDiv.textContent = `Selected: ${file.name}`;
@@ -97,7 +96,6 @@ function handleFileSelect(file) {
 }
 
 function fetchFiles() {
-    // Build the query string with sort parameters
     const queryParams = new URLSearchParams({
         sort: currentSort.column,
         order: currentSort.direction
@@ -110,7 +108,6 @@ function fetchFiles() {
         })
         .catch(error => {
             console.error("Error fetching files:", error);
-            // Show error in table
             const tableBody = document.querySelector("#fileTable tbody");
             tableBody.innerHTML = `<tr><td colspan="5">Error loading files: ${error.message}</td></tr>`;
         });
@@ -132,15 +129,38 @@ function populateFileTable(files) {
             <td>${file.name}</td>
             <td>${file.size_fmt}</td>
             <td>${file.modified_fmt}</td>
-            <td><a href="/uploads/${file.name}" download>📥 Download</a></td>
+            <td><a href="/download/${file.name}" download>📥 Download</a></td>
         `;
         tableBody.appendChild(row);
     });
 }
 
+function fetchIPs() {
+    fetch('/get_ips')
+        .then(response => response.json())
+        .then(ips => {
+            const recipientSelect = document.getElementById('recipientSelect');
+            // Clear existing IPs except "Everyone"
+            while (recipientSelect.options.length > 1) {
+                recipientSelect.remove(1);
+            }
+            ips.forEach(ip => {
+                const option = document.createElement('option');
+                option.value = ip;
+                option.textContent = ip;
+                recipientSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching IPs:", error);
+        });
+}
+
 function uploadFile() {
     const fileInput = document.getElementById("fileInput");
+    const recipientSelect = document.getElementById("recipientSelect");
     const file = fileInput.files[0];
+    const recipient = recipientSelect.value;
 
     if (!file) {
         alert("Please select a file first.");
@@ -149,12 +169,17 @@ function uploadFile() {
 
     const formData = new FormData();
     formData.append("file", file);
+    if (recipient && recipient !== "Everyone") {
+        formData.append("recipient", recipient);
+    } else {
+        formData.append("recipient", "Everyone");
+    }
 
     fetch("/upload", {
         method: "POST",
         body: formData
     })
-    .then(response => response.json())  // Changed from text() to json()
+    .then(response => response.json())
     .then(result => {
         if (result.error) {
             throw new Error(result.error);
@@ -164,67 +189,10 @@ function uploadFile() {
         // Reset the upload interface
         document.getElementById('selectedFile').style.display = 'none';
         fileInput.value = '';
+        recipientSelect.value = 'Everyone';
     })
     .catch(error => {
         console.error("Error uploading file:", error);
         alert("Error uploading file: " + error.message);
     });
 }
-
-// Matrix background animation
-// const canvas = document.getElementById('matrixBackground');
-// const ctx = canvas.getContext('2d');
-
-// // Set canvas size
-// function resizeCanvas() {
-//     canvas.width = window.innerWidth;
-//     canvas.height = window.innerHeight;
-// }
-
-// // Initial resize
-// resizeCanvas();
-
-// // Resize canvas when window is resized
-// window.addEventListener('resize', resizeCanvas);
-
-// // Characters to use in the animation
-// const chars = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-// const charArray = chars.split('');
-// const fontSize = 14;
-// const columns = Math.floor(canvas.width / fontSize);
-
-// // Array to track y position of each column
-// const drops = [];
-// for (let i = 0; i < columns; i++) {
-//     drops[i] = 1;
-// }
-
-// // Drawing function
-// function draw() {
-//     // Semi-transparent black background to create fade effect
-//     ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-//     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-//     // Green text
-//     ctx.fillStyle = '#33ff33';
-//     ctx.font = `${fontSize}px monospace`;
-
-//     // Loop over drops
-//     for (let i = 0; i < drops.length; i++) {
-//         // Random character
-//         const char = charArray[Math.floor(Math.random() * charArray.length)];
-//         // Draw character
-//         ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-
-//         // Reset drop if it reaches bottom or randomly
-//         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-//             drops[i] = 0;
-//         }
-
-//         // Move drop
-//         drops[i]++;
-//     }
-// }
-
-// // Animation loop
-// setInterval(draw, 33);
