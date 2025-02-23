@@ -1,8 +1,6 @@
----
-
 # LANxfer
 
-**LANxfer** is a simple, secure file transfer application designed for local area networks (LANs). It allows users to upload encrypted files, share them with specific devices or everyone on the network, and download them with automatic decryption—all within a cyberpunk-themed web interface. Built with Flask (Python) and JavaScript, it uses AES-256 encryption to ensure file security.
+*LANxfer* is a simple, secure file transfer application designed for local area networks (LANs). It allows users to upload encrypted files, share them with specific devices or everyone on the network, and download them with automatic decryption—all within a cyberpunk-themed web interface. Built with Flask (Python) and JavaScript, it uses AES-256 encryption to ensure file security.
 
 ## Features
 - **File Upload**: Drag and drop or select files to upload, encrypted with AES-256.
@@ -30,11 +28,12 @@
    ```bash
    pip install Flask pycryptodome
    ```
-   - `Flask`: Web framework for the server.
-   - `pycryptodome`: Provides AES encryption functionality.
+   - Flask: Web framework for the server.
+   - pycryptodome: Provides AES encryption functionality.
 
 3. **Project Structure**
    Ensure your directory looks like this:
+
    ```
    LANxfer/
    ├── app.py
@@ -52,12 +51,12 @@
    ```bash
    python app.py
    ```
-   The server will run on `http://0.0.0.0:5000` (accessible from any device on your LAN).
+   The server will run on http://0.0.0.0:5000 (accessible from any device on your LAN).
 
 ## Usage
 
 1. **Access the Web Interface**
-   - Open a browser on any device in the same LAN and navigate to `http://<server-ip>:5000` (replace `<server-ip>` with the IP of the machine running `app.py`, e.g., `http://192.168.1.100:5000`).
+   - Open a browser on any device in the same LAN and navigate to http://<server-ip>:5000 (replace `<server-ip>` with the IP of the machine running `app.py`, e.g., http://192.168.1.100:5000).
 
 2. **Upload a File**
    - Drag a file into the drop zone or click "Choose File" to select one.
@@ -73,9 +72,9 @@
 
 ## How It Works
 
-### Server (`app.py`)
+### Server (app.py)
 - **Encryption**: Files are encrypted with AES-256 in CBC mode using a pre-shared key (`SECRET_KEY`).
-- **IP Management**: Tracks active IPs with timestamps, removing them after 30 seconds (`TIMEOUT_MINUTES = 0.5`) of inactivity via a background thread.
+- **IP Management**: Tracks active IPs with timestamps, removing them after 30 seconds (TIMEOUT_MINUTES = 0.5) of inactivity via a background thread.
 - **Endpoints**:
   - `/`: Serves the main page and tracks visitors.
   - `/get_ips`: Returns active IPs, updating the requester’s timestamp.
@@ -83,7 +82,7 @@
   - `/upload`: Handles file uploads and encryption.
   - `/download/<filename>`: Serves encrypted files with access control.
 
-### Client (`index.html`, `styles.css`, `script.js`)
+### Client (index.html, styles.css, script.js)
 - **UI**: Cyberpunk-themed interface with drag-and-drop support and a sortable file table.
 - **JavaScript**: Uses CryptoJS for client-side decryption, fetches IPs manually via a "Refresh IPs" button, and handles file uploads/downloads.
 - **Timeout**: IPs are refreshed only on page load or button click, relying on the server’s timeout to remove inactive devices.
@@ -111,6 +110,4 @@
 Feel free to fork this repository, submit issues, or send pull requests to enhance LANxfer!
 
 ## License
-This project is open-source under the [MIT License](LICENSE). 
-
----
+This project is open-source under the [MIT License](LICENSE).
